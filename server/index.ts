@@ -12,7 +12,7 @@ const PORT = Number(process.env.PORT) || Number(process.env.API_SERVER_PORT) || 
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: process.env.CORS_ORIGIN || "https://full-screening-system.vercel.app",
   }),
 );
 
