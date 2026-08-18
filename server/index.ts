@@ -1,4 +1,4 @@
- import dotenv from "dotenv";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -8,11 +8,11 @@ const { default: aiRoutes } = await import("./routes/ai.routes");
 
 const app = express();
 
-const PORT = Number(process.env.API_SERVER_PORT) || 4000;
+const PORT = Number(process.env.PORT) || Number(process.env.API_SERVER_PORT) || 4000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
   }),
 );
 
@@ -28,5 +28,5 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/ai", aiRoutes);
 
 app.listen(PORT, () => {
-  console.log(`AI server running on http://localhost:${PORT}`);
-  });
+  console.log(`AI server running on port ${PORT}`);
+});
