@@ -1,0 +1,191 @@
+@import "tailwindcss";
+
+/*
+ * ============================================================
+ * DESIGN SYSTEM
+ * Full Screening & Shortlisting System
+ * ============================================================
+ *
+ * Design direction:
+ * - Professional admissions system
+ * - Modern SaaS
+ * - Subtle AI personality
+ *
+ * Theme:
+ * - Light mode by default
+ * - Dark mode through .dark
+ *
+ * Primary:
+ * - Deep Indigo
+ *
+ * Secondary:
+ * - Cool Neutral
+ *
+ * Dark:
+ * - Blue-black
+ *
+ * AI:
+ * - Restrained violet/cyan accent
+ */
+
+/* ============================================================
+   TAILWIND THEME TOKENS
+   ============================================================ */
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --color-ai: var(--ai);
+  --color-ai-foreground: var(--ai-foreground);
+
+  --color-ai-secondary: var(--ai-secondary);
+}
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* Typography */
+  font-family:
+    Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Core */
+  --background: #f7f8fc;
+  --foreground: #172033;
+
+  --surface: #ffffff;
+  --surface-muted: #f1f3f8;
+
+  /* Brand */
+  --primary: #3730a3;
+  --primary-foreground: #ffffff;
+
+  --secondary: #e8ebf2;
+  --secondary-foreground: #30384a;
+
+  /* Supporting */
+  --muted: #eef0f5;
+  --muted-foreground: #667085;
+
+  --border: #dfe3eb;
+  --input: #d5dae4;
+
+  /* Semantic */
+  --success: #15803d;
+  --success-foreground: #ffffff;
+
+  --warning: #b45309;
+  --warning-foreground: #ffffff;
+
+  --danger: #dc2626;
+  --danger-foreground: #ffffff;
+
+  --info: #2563eb;
+  --info-foreground: #ffffff;
+
+  /* AI */
+  --ai: #7c3aed;
+  --ai-foreground: #ffffff;
+  --ai-secondary: #06b6d4;
+}
+
+/* ============================================================
+   DARK THEME
+   ============================================================ */
+
+.dark {
+  color-scheme: dark;
+
+  /* Core */
+  --background: #0b1020;
+  --foreground: #edf1f7;
+
+  --surface: #111827;
+  --surface-muted: #182033;
+
+  /* Brand */
+  --primary: #6366f1;
+  --primary-foreground: #ffffff;
+
+  --secondary: #20283a;
+  --secondary-foreground: #e2e8f0;
+
+  /* Supporting */
+  --muted: #1a2233;
+  --muted-foreground: #98a2b3;
+
+  --border: #293348;
+  --input: #344054;
+
+  /* Semantic */
+  --success: #22c55e;
+  --success-foreground: #052e16;
+
+  --warning: #f59e0b;
+  --warning-foreground: #451a03;
+
+  --danger: #ef4444;
+  --danger-foreground: #450a0a;
+
+  --info: #60a5fa;
+  --info-foreground: #172554;
+
+  /* AI */
+  --ai: #a78bfa;
+  --ai-foreground: #1e1b4b;
+  --ai-secondary: #22d3ee;
+}
+
+/* ============================================================
+   GLOBAL BASE STYLES
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+* {
+  box-sizing: border-box;
+}
