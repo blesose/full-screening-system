@@ -190,31 +190,29 @@ function ApplicantsPage() {
     });
 
     return [...filtered].sort((a, b) => {
-  let aValue: number;
-  let bValue: number;
+      let aValue: number;
+      let bValue: number;
 
-  if (sortField === "gpa") {
-    aValue = a.application.gpa;
-    bValue = b.application.gpa;
-  } else if (sortField === "testScore") {
-    aValue = a.application.testScore;
-    bValue = b.application.testScore;
-  } else if (sortField === "score") {
-    aValue = a.reviewScore ?? 0;
-    bValue = b.reviewScore ?? 0;
-  } else {
-    // submittedAt or default
-    aValue = new Date(a.application.submittedAt).getTime();
-    bValue = new Date(b.application.submittedAt).getTime();
-  }
+      if (sortField === "gpa") {
+        aValue = a.application.gpa;
+        bValue = b.application.gpa;
+      } else if (sortField === "testScore") {
+        aValue = a.application.testScore;
+        bValue = b.application.testScore;
+      } else if (sortField === "score") {
+        aValue = a.reviewScore ?? 0;
+        bValue = b.reviewScore ?? 0;
+      } else {
+        aValue = new Date(a.application.submittedAt).getTime();
+        bValue = new Date(b.application.submittedAt).getTime();
+      }
 
-  // Use the values
-  if (aValue === bValue) return 0;
-  
-  return sortDirection === "asc" 
-    ? (aValue > bValue ? 1 : -1)
-    : (aValue < bValue ? 1 : -1);
-});
+      if (aValue === bValue) return 0;
+      
+      return sortDirection === "asc" 
+        ? (aValue > bValue ? 1 : -1)
+        : (aValue < bValue ? 1 : -1);
+    });
   }, [
     applicantRows,
     search,
@@ -229,7 +227,7 @@ function ApplicantsPage() {
   if (isLoading) {
     return (
       <main className="p-6">
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           Loading applicants...
         </p>
       </main>
@@ -239,14 +237,12 @@ function ApplicantsPage() {
   if (isError) {
     return (
       <main className="p-6">
-        <div className="rounded-xl border border-red-200 bg-red-50 p-5">
-          <h1 className="text-base font-semibold text-red-900">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-5 dark:border-red-900/50 dark:bg-red-950/30">
+          <h1 className="text-base font-semibold text-red-900 dark:text-red-200">
             Unable to load applicants
           </h1>
-
-          <p className="mt-1 text-sm text-red-700">
-            We could not retrieve the applicant and
-            application data.
+          <p className="mt-1 text-sm text-red-700 dark:text-red-300">
+            We could not retrieve the applicant and application data.
           </p>
         </div>
       </main>
@@ -256,28 +252,25 @@ function ApplicantsPage() {
   return (
     <main className="space-y-6 p-6">
       <header>
-        <p className="text-sm font-medium text-slate-500">
+        <p className="text-sm font-medium text-muted-foreground">
           Admissions Workspace
         </p>
-
-        <h1 className="mt-1 text-2xl font-semibold text-slate-950">
+        <h1 className="mt-1 text-2xl font-semibold text-foreground">
           Applicants
         </h1>
-
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-muted-foreground">
           Review and manage submitted applications.
         </p>
       </header>
 
-      <section className="rounded-xl border border-slate-200 bg-white">
+      <section className="rounded-xl border border-border bg-surface">
         {/* Filters */}
-        <div className="flex flex-col gap-4 border-b border-slate-200 p-4">
-          {/* Search */}
+        <div className="flex flex-col gap-4 border-b border-border p-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full lg:max-w-md">
               <Search
                 size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               />
 
               <input
@@ -287,11 +280,10 @@ function ApplicantsPage() {
                   setSearch(event.target.value)
                 }
                 placeholder="Search applicants, programs..."
-                className="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
-            {/* Score filters */}
             <div className="flex flex-wrap gap-2">
               <input
                 type="number"
@@ -306,7 +298,7 @@ function ApplicantsPage() {
                   )
                 }
                 placeholder="Min score"
-                className="w-28 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="w-28 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
 
               <input
@@ -322,19 +314,17 @@ function ApplicantsPage() {
                   )
                 }
                 placeholder="Max score"
-                className="w-28 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="w-28 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
 
-          {/* Select filters */}
           <div className="flex flex-wrap items-center gap-2">
             <SlidersHorizontal
               size={17}
-              className="text-slate-500"
+              className="text-muted-foreground"
             />
 
-            {/* Status */}
             <select
               value={statusFilter}
               onChange={(event) =>
@@ -344,7 +334,7 @@ function ApplicantsPage() {
                     | "ALL",
                 )
               }
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             >
               <option value="ALL">
                 All statuses
@@ -362,13 +352,12 @@ function ApplicantsPage() {
               )}
             </select>
 
-            {/* Program */}
             <select
               value={programFilter}
               onChange={(event) =>
                 setProgramFilter(event.target.value)
               }
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             >
               <option value="ALL">
                 All programs
@@ -391,32 +380,27 @@ function ApplicantsPage() {
               ))}
             </select>
 
-            {/* Sort field */}
             <select
               value={sortField}
               onChange={(event) =>
                 setSortField(event.target.value)
               }
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             >
               <option value="score">
                 Review score
               </option>
-
               <option value="submittedAt">
                 Submission date
               </option>
-
               <option value="gpa">
                 GPA
               </option>
-
               <option value="testScore">
                 Test score
               </option>
             </select>
 
-            {/* Sort direction */}
             <select
               value={sortDirection}
               onChange={(event) =>
@@ -426,12 +410,11 @@ function ApplicantsPage() {
                     | "desc",
                 )
               }
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             >
               <option value="desc">
                 Descending
               </option>
-
               <option value="asc">
                 Ascending
               </option>
@@ -442,79 +425,72 @@ function ApplicantsPage() {
         {/* Applicants table */}
         <div className="overflow-x-auto">
           <table className="min-w-full text-left">
-            <thead className="border-b border-slate-200 bg-slate-50">
+            <thead className="border-b border-border bg-muted">
               <tr>
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Applicant
                 </th>
-
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Program
                 </th>
-
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   GPA
                 </th>
-
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Test Score
                 </th>
-
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Review Score
                 </th>
-
-                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Status
                 </th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-border">
               {filteredRows.map((row) => (
                 <tr
                   key={row.application.id}
-                  className="transition hover:bg-slate-50"
+                  className="transition hover:bg-muted/50"
                 >
                   <td className="px-5 py-4">
                     <div>
                       <Link
-                        to={`/applicants/${row.application.id}`}
-                        className="text-sm font-medium text-slate-900 hover:text-indigo-700"
+                        to={`/applicant/${row.application.applicantId}`}
+                        className="text-sm font-medium text-foreground hover:text-primary"
                       >
                         {row.applicantName}
                       </Link>
-
-                      <p className="mt-0.5 text-xs text-slate-500">
+                      <p className="mt-0.5 text-xs text-muted-foreground">
                         {row.applicantEmail}
                       </p>
                     </div>
                   </td>
 
                   <td className="px-5 py-4">
-                    <p className="text-sm text-slate-700">
+                    <p className="text-sm text-foreground">
                       {row.application.program}
                     </p>
-
-                    <p className="mt-0.5 text-xs text-slate-500">
+                    <p className="mt-0.5 text-xs text-muted-foreground">
                       {row.application.programCode}
                     </p>
                   </td>
 
-                  <td className="px-5 py-4 text-sm text-slate-700">
+                  <td className="px-5 py-4 text-sm text-foreground">
                     {row.application.gpa.toFixed(2)}
                   </td>
 
-                  <td className="px-5 py-4 text-sm font-medium text-slate-900">
+                  <td className="px-5 py-4 text-sm font-medium text-foreground">
                     {row.application.testScore}
                   </td>
 
-                  <td className="px-5 py-4 text-sm font-medium text-slate-900">
+                  <td className="px-5 py-4 text-sm font-medium text-foreground">
                     {row.reviewScore ?? "—"}
                   </td>
 
                   <td className="px-5 py-4">
-                    <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                    <span className="inline-flex rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
                       {statusLabels[
                         row.application.status
                       ]}
@@ -529,13 +505,11 @@ function ApplicantsPage() {
                     colSpan={6}
                     className="px-5 py-12 text-center"
                   >
-                    <p className="text-sm font-medium text-slate-700">
+                    <p className="text-sm font-medium text-foreground">
                       No applicants found
                     </p>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                      Try changing your search or
-                      filters.
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Try changing your search or filters.
                     </p>
                   </td>
                 </tr>
@@ -544,9 +518,8 @@ function ApplicantsPage() {
           </table>
         </div>
 
-        {/* Footer */}
-        <div className="border-t border-slate-200 px-5 py-3">
-          <p className="text-xs text-slate-500">
+        <div className="border-t border-border px-5 py-3">
+          <p className="text-xs text-muted-foreground">
             Showing {filteredRows.length} of{" "}
             {applicantRows.length} applications
           </p>

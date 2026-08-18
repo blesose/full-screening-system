@@ -137,7 +137,7 @@ function SavedViewsPage() {
   if (isLoading) {
     return (
       <main className="flex min-h-[60vh] items-center justify-center">
-        <div className="flex items-center gap-3 text-sm text-slate-500">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <LoaderCircle className="h-5 w-5 animate-spin" />
           Loading saved views...
         </div>
@@ -149,15 +149,15 @@ function SavedViewsPage() {
     return (
       <main className="space-y-6">
         <section>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-muted-foreground">
             Admissions Workspace
           </p>
 
-          <h1 className="mt-1 text-3xl font-semibold text-slate-950 dark:text-white">
+          <h1 className="mt-1 text-3xl font-semibold text-foreground">
             Saved Views
           </h1>
 
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-muted-foreground">
             Save and reuse frequently used applicant filters.
           </p>
         </section>
@@ -173,33 +173,33 @@ function SavedViewsPage() {
     <main className="space-y-6">
       {/* Header */}
       <section>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           Admissions Workspace
         </p>
 
-        <h1 className="mt-1 text-3xl font-semibold text-slate-950 dark:text-white">
+        <h1 className="mt-1 text-3xl font-semibold text-foreground">
           Saved Views
         </h1>
 
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-2 text-sm text-muted-foreground">
           Save and reuse frequently used applicant filters and
           sorting preferences.
         </p>
       </section>
 
       {/* Summary */}
-      <section className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+      <section className="rounded-xl border border-border bg-surface p-5">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-indigo-50 p-2.5 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400">
+          <div className="rounded-lg bg-primary/10 p-2.5 text-primary">
             <Bookmark size={20} />
           </div>
 
           <div>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               Saved views
             </p>
 
-            <p className="text-2xl font-semibold text-slate-950 dark:text-white">
+            <p className="text-2xl font-semibold text-foreground">
               {savedViews.length}
             </p>
           </div>
@@ -208,17 +208,17 @@ function SavedViewsPage() {
 
       {/* Saved Views */}
       {sortedViews.length === 0 ? (
-        <section className="rounded-xl border border-slate-200 bg-white px-6 py-16 text-center dark:border-slate-800 dark:bg-slate-900">
+        <section className="rounded-xl border border-border bg-surface px-6 py-16 text-center">
           <Bookmark
             size={36}
-            className="mx-auto text-slate-400"
+            className="mx-auto text-muted-foreground"
           />
 
-          <h2 className="mt-4 text-base font-semibold text-slate-900 dark:text-white">
+          <h2 className="mt-4 text-base font-semibold text-foreground">
             No saved views yet
           </h2>
 
-          <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
+          <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
             Saved applicant filters will appear here once you
             create a view.
           </p>
@@ -257,20 +257,20 @@ function SavedViewCard({
   const { filters, sort } = view;
 
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+    <article className="rounded-xl border border-border bg-surface p-5">
       {/* Card header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <div className="rounded-lg bg-indigo-50 p-2.5 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400">
+          <div className="rounded-lg bg-primary/10 p-2.5 text-primary">
             <Bookmark size={18} />
           </div>
 
           <div>
-            <h2 className="font-semibold text-slate-950 dark:text-white">
+            <h2 className="font-semibold text-foreground">
               {view.name}
             </h2>
 
-            <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">
+            <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
               <CalendarDays size={13} />
 
               <span>
@@ -285,7 +285,7 @@ function SavedViewCard({
           onClick={onDelete}
           disabled={deleting}
           title="Delete saved view"
-          className="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-red-950/30 dark:hover:text-red-400"
+          className="rounded-lg p-2 text-muted-foreground transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-red-950/30 dark:hover:text-red-400"
         >
           {deleting ? (
             <LoaderCircle
@@ -303,10 +303,10 @@ function SavedViewCard({
         <div className="flex items-center gap-2">
           <Filter
             size={15}
-            className="text-slate-400"
+            className="text-muted-foreground"
           />
 
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Filters
           </h3>
         </div>
@@ -349,7 +349,7 @@ function SavedViewCard({
             filters.minScore === null &&
             filters.maxScore === null &&
             !filters.search && (
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-muted-foreground">
                 No additional filters
               </span>
             )}
@@ -357,12 +357,12 @@ function SavedViewCard({
       </div>
 
       {/* Sort */}
-      <div className="mt-5 border-t border-slate-100 pt-4 dark:border-slate-800">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+      <div className="mt-5 border-t border-border pt-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Sort
         </p>
 
-        <div className="mt-2 flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+        <div className="mt-2 flex items-center gap-2 text-sm text-foreground">
           {sort.direction === "asc" ? (
             <ArrowUp size={15} />
           ) : (
@@ -373,7 +373,7 @@ function SavedViewCard({
             {sortFieldLabels[sort.field]}
           </span>
 
-          <span className="text-slate-400">
+          <span className="text-muted-foreground">
             ·
           </span>
 
@@ -386,11 +386,11 @@ function SavedViewCard({
       </div>
 
       {/* Actions */}
-      <div className="mt-5 flex items-center justify-end border-t border-slate-100 pt-4 dark:border-slate-800">
+      <div className="mt-5 flex items-center justify-end border-t border-border pt-4">
         <button
           type="button"
           onClick={onApply}
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
         >
           Apply View
         </button>
@@ -407,8 +407,8 @@ function FilterBadge({
   value: string;
 }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-      <span className="font-medium text-slate-500 dark:text-slate-400">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-xs text-foreground">
+      <span className="font-medium text-muted-foreground">
         {label}:
       </span>
 

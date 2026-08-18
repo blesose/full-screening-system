@@ -7,8 +7,10 @@ import ReviewWorkspacePage from "../pages/ReviewWorkspacePage";
 import ShortlistPage from "../pages/ShortlistPage";
 import SavedViewsPage from "../pages/SavedViewsPage";
 import SettingsPage from "../pages/SettingsPage";
+import ApplicantPortal from "../pages/ApplicantPortal";
 
 import AppShell from "../components/layouts/AppShell";
+import AITestPage from "../pages/AITestPage";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -49,6 +51,14 @@ export const router = createBrowserRouter([
         path: "settings",
         element: <SettingsPage />,
     },
+    {
+        path: "/applicant/:applicantId",
+        element: <ApplicantPortal />,
+    },
+    {
+  path: "/ai-test",
+  element: <AITestPage />,
+},
         ]
     }
     

@@ -13,13 +13,8 @@ import {
   analyzeApplication,
   type AIScreeningResult,
 } from "../../features/ai/aiScreening";
-import {
-  useLatestAIAnalysis,
-  useSaveAIAnalysis,
-} from "../../features/ai/hooks/useAIAnalyses";
 
 interface AIScreeningAssistantProps {
-  applicationId: string;
   application: {
     firstName: string;
     lastName: string;
@@ -44,22 +39,17 @@ interface AIScreeningAssistantProps {
 }
 
 function AIScreeningAssistant({
-  applicationId,
   application,
   review,
   rubric,
 }: AIScreeningAssistantProps) {
-  const { data: storedAnalysis, isLoading: isLoadingStored } =
-    useLatestAIAnalysis(applicationId);
-
-  const saveAnalysisMutation = useSaveAIAnalysis();
-
-  const [analysis, setAnalysis] = useState<AIScreeningResult | null>(storedAnalysis || null);
-  const [analyzedAt, setAnalyzedAt] = useState<string | null>(storedAnalysis?.createdAt || null);
+  const [analysis, setAnalysis] = useState<AIScreeningResult | null>(null);
+  const [analyzedAt, setAnalyzedAt] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const runAnalysis = async () => {
+    console.log("🔍 Starting AI analysis...");
     setIsAnalyzing(true);
     setError(null);
 
@@ -69,30 +59,37 @@ function AIScreeningAssistant({
         review,
         rubric,
       );
+      
+      console.log("✅ AI result:", result);
 
       const createdAt = new Date().toISOString();
 
       setAnalysis(result);
       setAnalyzedAt(createdAt);
-
-      saveAnalysisMutation.mutate({
-        id: `AI-${applicationId}-${Date.now()}`,
-        applicationId,
-        ...result,
-        provider: "Google",
-        model: "gemini-3.6-flash",
-        createdAt,
-      });
+      
+      console.log("✅ Analysis complete!");
     } catch (err) {
-      if (isAxiosError(err) && err.response?.status === 429) {
-        setError(
-          "The AI service is rate-limited right now. Please wait a minute and try again.",
-        );
-      } else if (isAxiosError(err) && err.response?.data?.error) {
-        setError(err.response.data.error);
+      console.error("❌ Error:", err);
+      
+      if (isAxiosError(err)) {
+        if (err.response?.status === 404) {
+          setError(
+            "AI service is not available. Please make sure the AI server is running.",
+          );
+        } else if (err.response?.status === 429) {
+          setError(
+            "Rate limited. Please wait a minute and try again.",
+          );
+        } else if (err.response?.data?.error) {
+          setError(err.response.data.error);
+        } else {
+          setError(
+            "Something went wrong. Please try again.",
+          );
+        }
       } else {
         setError(
-          "Something went wrong while analyzing this applicant. Please try again.",
+          "Something went wrong. Please try again.",
         );
       }
     } finally {
@@ -105,36 +102,36 @@ function AIScreeningAssistant({
       label: "Recommend Shortlist",
       icon: CheckCircle2,
       classes:
-        "border-emerald-200 bg-emerald-50 text-emerald-700",
+        "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300",
     },
     REJECT: {
       label: "Recommend Reject",
       icon: XCircle,
       classes:
-        "border-red-200 bg-red-50 text-red-700",
+        "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300",
     },
     MANUAL_REVIEW: {
       label: "Recommend Manual Review",
       icon: AlertTriangle,
       classes:
-        "border-amber-200 bg-amber-50 text-amber-700",
+        "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300",
     },
   };
 
   return (
-    <section className="rounded-2xl border border-indigo-200 bg-white p-6 shadow-sm">
+    <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <div className="rounded-xl bg-indigo-50 p-2.5">
-            <Sparkles className="h-5 w-5 text-indigo-600" />
+          <div className="rounded-xl bg-primary/10 p-2.5">
+            <Sparkles className="h-5 w-5 text-primary" />
           </div>
 
           <div>
-            <h2 className="text-lg font-semibold text-slate-950">
+            <h2 className="text-lg font-semibold text-foreground">
               AI Screening Assistant
             </h2>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-muted-foreground">
               Analyze this applicant's profile and receive
               an evidence-based screening recommendation.
             </p>
@@ -144,8 +141,8 @@ function AIScreeningAssistant({
         <button
           type="button"
           onClick={runAnalysis}
-          disabled={isAnalyzing || isLoadingStored}
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={isAnalyzing}
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isAnalyzing ? (
             <>
@@ -162,21 +159,21 @@ function AIScreeningAssistant({
       </div>
 
       {analyzedAt && !isAnalyzing && (
-        <div className="mt-3 flex items-center gap-1.5 text-xs text-slate-500">
+        <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
           <Clock3 className="h-3.5 w-3.5" />
           Last analyzed {new Date(analyzedAt).toLocaleString()}
         </div>
       )}
 
       {error && (
-        <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4">
+        <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950/30">
           <div className="flex gap-3">
-            <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+            <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600 dark:text-red-400" />
             <div>
-              <p className="text-sm font-medium text-red-900">
+              <p className="text-sm font-medium text-red-900 dark:text-red-200">
                 Analysis failed
               </p>
-              <p className="mt-1 text-xs leading-5 text-red-700">
+              <p className="mt-1 text-xs leading-5 text-red-700 dark:text-red-300">
                 {error}
               </p>
             </div>
@@ -184,17 +181,17 @@ function AIScreeningAssistant({
         </div>
       )}
 
-      {!analysis && !isAnalyzing && !error && !isLoadingStored && (
-        <div className="mt-5 rounded-xl border border-indigo-100 bg-indigo-50/60 p-4">
+      {!analysis && !isAnalyzing && !error && (
+        <div className="mt-5 rounded-xl border border-primary/20 bg-primary/5 p-4">
           <div className="flex gap-3">
-            <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-indigo-600" />
+            <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
 
             <div>
-              <p className="text-sm font-medium text-indigo-900">
+              <p className="text-sm font-medium text-foreground">
                 AI assistance is ready
               </p>
 
-              <p className="mt-1 text-xs leading-5 text-indigo-700">
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">
                 The assistant considers academic performance,
                 assessment results, personal statement, activities,
                 achievements, recommendations, and review scores.
@@ -239,53 +236,53 @@ function AIScreeningAssistant({
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs font-medium text-slate-500">
+            <div className="rounded-xl bg-muted p-4">
+              <p className="text-xs font-medium text-muted-foreground">
                 Screening Score
               </p>
 
-              <p className="mt-1 text-2xl font-semibold text-slate-950">
+              <p className="mt-1 text-2xl font-semibold text-foreground">
                 {analysis.score}
-                <span className="text-sm font-normal text-slate-400">
+                <span className="text-sm font-normal text-muted-foreground">
                   /100
                 </span>
               </p>
             </div>
 
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs font-medium text-slate-500">
+            <div className="rounded-xl bg-muted p-4">
+              <p className="text-xs font-medium text-muted-foreground">
                 Shortlist Threshold
               </p>
 
-              <p className="mt-1 text-2xl font-semibold text-slate-950">
+              <p className="mt-1 text-2xl font-semibold text-foreground">
                 {rubric.shortlistThreshold}
               </p>
             </div>
 
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs font-medium text-slate-500">
+            <div className="rounded-xl bg-muted p-4">
+              <p className="text-xs font-medium text-muted-foreground">
                 Reject Threshold
               </p>
 
-              <p className="mt-1 text-2xl font-semibold text-slate-950">
+              <p className="mt-1 text-2xl font-semibold text-foreground">
                 {rubric.rejectThreshold}
               </p>
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">
+            <h3 className="text-sm font-semibold text-foreground">
               Screening Summary
             </h3>
 
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
               {analysis.summary}
             </p>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <div>
-              <h3 className="text-sm font-semibold text-emerald-700">
+              <h3 className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
                 Strengths
               </h3>
 
@@ -293,7 +290,7 @@ function AIScreeningAssistant({
                 {analysis.strengths.map((strength) => (
                   <li
                     key={strength}
-                    className="flex gap-2 text-sm text-slate-600"
+                    className="flex gap-2 text-sm text-muted-foreground"
                   >
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
                     <span>{strength}</span>
@@ -303,7 +300,7 @@ function AIScreeningAssistant({
             </div>
 
             <div>
-              <h3 className="text-sm font-semibold text-amber-700">
+              <h3 className="text-sm font-semibold text-amber-700 dark:text-amber-300">
                 Areas to Review
               </h3>
 
@@ -312,16 +309,15 @@ function AIScreeningAssistant({
                   analysis.concerns.map((concern) => (
                     <li
                       key={concern}
-                      className="flex gap-2 text-sm text-slate-600"
+                      className="flex gap-2 text-sm text-muted-foreground"
                     >
                       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
                       <span>{concern}</span>
                     </li>
                   ))
                 ) : (
-                  <li className="text-sm text-slate-500">
-                    No major concerns identified from the
-                    available application data.
+                  <li className="text-sm text-muted-foreground">
+                    No major concerns identified.
                   </li>
                 )}
               </ul>
@@ -329,7 +325,7 @@ function AIScreeningAssistant({
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">
+            <h3 className="text-sm font-semibold text-foreground">
               Evidence Considered
             </h3>
 
@@ -337,7 +333,7 @@ function AIScreeningAssistant({
               {analysis.evidence.map((item) => (
                 <div
                   key={item}
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600"
+                  className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground"
                 >
                   {item}
                 </div>
@@ -345,8 +341,8 @@ function AIScreeningAssistant({
             </div>
           </div>
 
-          <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
-            <p className="text-xs leading-5 text-indigo-700">
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+            <p className="text-xs leading-5 text-muted-foreground">
               AI recommendations are intended to support human
               review rather than replace admissions decisions.
               Final decisions remain with authorized reviewers.

@@ -1,4 +1,3 @@
-
 import {
   AlertTriangle,
   CheckCircle2,
@@ -16,6 +15,7 @@ import {
   useCreateReview,
   useReviews,
 } from "../features/reviews/hooks/useReviews";
+import { PDFExportButton } from "../components/ui/PDFExportButton";
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -36,20 +36,11 @@ function DashboardPage() {
     reviewsQuery.isError ||
     decisionsQuery.isError;
 
-  /*
-   * Start a review for the exact application
-   * whose "Start review" button was clicked.
-   */
   const handleStartReview = (applicationId: string) => {
     const existingReview = reviewsQuery.data?.find(
       (review) => review.applicationId === applicationId,
     );
 
-    /*
-     * Safety check:
-     * If a review already exists for this application,
-     * open that review instead of creating another one.
-     */
     if (existingReview) {
       navigate(`/reviews/${existingReview.id}`);
       return;
@@ -72,15 +63,8 @@ function DashboardPage() {
       {
         onSuccess: (createdReview) => {
           toast.success("Review started");
-
-          /*
-           * Navigate using the newly created review ID.
-           * ReviewWorkspacePage will then load the correct
-           * application through review.applicationId.
-           */
           navigate(`/reviews/${createdReview.id}`);
         },
-
         onError: () => {
           toast.error("Failed to start review");
         },
@@ -112,14 +96,6 @@ function DashboardPage() {
   const reviews = reviewsQuery.data ?? [];
   const decisions = decisionsQuery.data ?? [];
 
-  /*
-   * Build lookup maps so we can quickly connect:
-   *
-   * Application → Review
-   * Application → Decision
-   *
-   * This avoids repeatedly searching the arrays while rendering.
-   */
   const reviewMap = new Map(
     reviews.map((review) => [review.applicationId, review]),
   );
@@ -131,41 +107,27 @@ function DashboardPage() {
     ]),
   );
 
-  /*
-   * Application statistics
-   */
+  // Application Statistics
   const totalApplications = applications.length;
-
   const newApplications = applications.filter(
     (application) => application.status === "NEW",
   ).length;
-
   const inReviewApplications = applications.filter(
     (application) => application.status === "IN_REVIEW",
   ).length;
 
-  /*
-   * Decision statistics come from the decision records,
-   * not application.status.
-   *
-   * This keeps the Dashboard consistent with the
-   * Decision & Shortlisting workspace.
-   */
+  // Decision Statistics
   const shortlistedApplications = decisions.filter(
     (decision) => decision.decision === "SHORTLISTED",
   ).length;
-
   const rejectedApplications = decisions.filter(
     (decision) => decision.decision === "REJECTED",
   ).length;
 
-  /*
-   * Review statistics
-   */
+  // Review Statistics
   const completedReviews = reviews.filter(
     (review) => review.status === "COMPLETE",
   ).length;
-
   const inProgressReviews = reviews.filter(
     (review) => review.status === "IN_PROGRESS",
   ).length;
@@ -187,10 +149,6 @@ function DashboardPage() {
         )
       : null;
 
-  /*
-   * Applications that have not reached a final decision
-   * and either have no review or an incomplete review.
-   */
   const needsAttention = applications.filter(
     (application) => {
       const review = reviewMap.get(application.id);
@@ -208,10 +166,6 @@ function DashboardPage() {
     },
   );
 
-  /*
-   * Applications that have completed reviews but have
-   * not received a final decision yet.
-   */
   const readyForDecision = applications.filter(
     (application) => {
       const review = reviewMap.get(application.id);
@@ -225,9 +179,6 @@ function DashboardPage() {
     },
   );
 
-  /*
-   * Most recently submitted applications.
-   */
   const recentApplications = [...applications]
     .sort(
       (a, b) =>
@@ -236,22 +187,86 @@ function DashboardPage() {
     )
     .slice(0, 5);
 
+  // Prepare data for PDF export
+  const getExportData = () => {
+    const recentData = recentApplications.map(app => {
+      const review = reviewMap.get(app.id);
+      const decision = decisionMap.get(app.id);
+      return {
+        'Application ID': app.id,
+        'Program': app.program,
+        'Score': review?.status === 'COMPLETE' && review.totalScore !== null 
+          ? `${review.totalScore}/100` 
+          : 'N/A',
+        'Review Status': review?.status === 'COMPLETE' ? 'Complete' : 
+                          review ? 'In Progress' : 'Not Started',
+        'Decision': decision?.decision === 'SHORTLISTED' ? 'Shortlisted' :
+                    decision?.decision === 'REJECTED' ? 'Rejected' : 'Pending',
+        'Submitted': new Date(app.submittedAt).toLocaleDateString(),
+      };
+    });
+
+    return [
+      {
+        'Metric': 'Total Applications',
+        'Value': totalApplications.toString(),
+      },
+      {
+        'Metric': 'New Applications',
+        'Value': newApplications.toString(),
+      },
+      {
+        'Metric': 'In Review',
+        'Value': inReviewApplications.toString(),
+      },
+      {
+        'Metric': 'Shortlisted',
+        'Value': shortlistedApplications.toString(),
+      },
+      {
+        'Metric': 'Rejected',
+        'Value': rejectedApplications.toString(),
+      },
+      {
+        'Metric': 'Completed Reviews',
+        'Value': completedReviews.toString(),
+      },
+      {
+        'Metric': 'Ready for Decision',
+        'Value': readyForDecision.length.toString(),
+      },
+      ...recentData,
+    ];
+  };
+
+  const exportColumns = [
+    { header: 'Metric / Application', accessor: 'Metric' },
+    { header: 'Value / Status', accessor: 'Value' },
+  ];
+
   return (
     <main className="space-y-6 p-4 sm:p-6">
-      {/* Header */}
-      <section>
-        <p className="text-sm font-medium text-muted-foreground">
-          Overview
-        </p>
-
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
-          Dashboard
-        </h1>
-
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Monitor applicant screening activity, review progress,
-          and admissions decisions.
-        </p>
+      {/* Header with PDF Export */}
+      <section className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">
+            Overview
+          </p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl text-foreground">
+            Dashboard
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Monitor applicant screening activity, review progress,
+            and admissions decisions.
+          </p>
+        </div>
+        <PDFExportButton
+          data={getExportData()}
+          columns={exportColumns}
+          filename={`dashboard_${new Date().toISOString().split('T')[0]}`}
+          label="Export Report"
+          variant="purple"
+        />
       </section>
 
       {/* Main statistics */}
@@ -261,19 +276,16 @@ function DashboardPage() {
           value={totalApplications}
           icon={Users}
         />
-
         <DashboardMetric
           label="New"
           value={newApplications}
           icon={FileCheck2}
         />
-
         <DashboardMetric
           label="In Review"
           value={inReviewApplications}
           icon={Clock3}
         />
-
         <DashboardMetric
           label="Shortlisted"
           value={shortlistedApplications}
@@ -288,19 +300,16 @@ function DashboardPage() {
           value={completedReviews}
           icon={FileCheck2}
         />
-
         <DashboardMetric
           label="Ready for Decision"
           value={readyForDecision.length}
           icon={Clock3}
         />
-
         <DashboardMetric
           label="Rejected"
           value={rejectedApplications}
           icon={XCircle}
         />
-
         <DashboardMetric
           label="Needs Attention"
           value={needsAttention.length}
@@ -314,51 +323,42 @@ function DashboardPage() {
         <div className="rounded-xl border border-border bg-surface p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="font-semibold">
+              <h2 className="font-semibold text-foreground">
                 Review Progress
               </h2>
-
               <p className="mt-1 text-sm text-muted-foreground">
-                Current reviewer activity across the application
-                pool.
+                Current reviewer activity across the application pool.
               </p>
             </div>
-
             <FileCheck2
               size={20}
               className="text-primary"
               strokeWidth={1.8}
             />
           </div>
-
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <div className="rounded-lg bg-secondary p-4">
+            <div className="rounded-lg bg-muted p-4">
               <p className="text-sm text-muted-foreground">
                 Completed Reviews
               </p>
-
-              <p className="mt-2 text-2xl font-semibold">
+              <p className="mt-2 text-2xl font-semibold text-foreground">
                 {completedReviews}
               </p>
             </div>
-
-            <div className="rounded-lg bg-secondary p-4">
+            <div className="rounded-lg bg-muted p-4">
               <p className="text-sm text-muted-foreground">
                 In Progress
               </p>
-
-              <p className="mt-2 text-2xl font-semibold">
+              <p className="mt-2 text-2xl font-semibold text-foreground">
                 {inProgressReviews}
               </p>
             </div>
           </div>
-
           <div className="mt-4 border-t border-border pt-4">
             <p className="text-sm text-muted-foreground">
               Average completed-review score
             </p>
-
-            <p className="mt-1 text-xl font-semibold">
+            <p className="mt-1 text-xl font-semibold text-foreground">
               {averageScore !== null
                 ? `${averageScore}/100`
                 : "—"}
@@ -370,55 +370,45 @@ function DashboardPage() {
         <div className="rounded-xl border border-border bg-surface p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="font-semibold">
+              <h2 className="font-semibold text-foreground">
                 Decision Overview
               </h2>
-
               <p className="mt-1 text-sm text-muted-foreground">
-                Applications that have completed review and
-                reached a decision stage.
+                Applications that have completed review and reached a decision stage.
               </p>
             </div>
-
             <CheckCircle2
               size={20}
               className="text-primary"
               strokeWidth={1.8}
             />
           </div>
-
           <div className="mt-6 space-y-3">
-            <div className="flex items-center justify-between rounded-lg bg-secondary p-4">
+            <div className="flex items-center justify-between rounded-lg bg-muted p-4">
               <span className="text-sm text-muted-foreground">
                 Ready for decision
               </span>
-
-              <span className="font-semibold">
+              <span className="font-semibold text-foreground">
                 {readyForDecision.length}
               </span>
             </div>
-
             <div className="flex items-center justify-between rounded-lg bg-emerald-50 p-4 dark:bg-emerald-950/30">
               <span className="text-sm text-emerald-700 dark:text-emerald-300">
                 Shortlisted
               </span>
-
               <span className="font-semibold text-emerald-700 dark:text-emerald-300">
                 {shortlistedApplications}
               </span>
             </div>
-
             <div className="flex items-center justify-between rounded-lg bg-red-50 p-4 dark:bg-red-950/30">
               <span className="text-sm text-red-700 dark:text-red-300">
                 Rejected
               </span>
-
               <span className="font-semibold text-red-700 dark:text-red-300">
                 {rejectedApplications}
               </span>
             </div>
           </div>
-
           <Link
             to="/shortlist"
             className="mt-5 inline-flex text-sm font-medium text-primary hover:underline"
@@ -432,44 +422,37 @@ function DashboardPage() {
       <section className="rounded-xl border border-border bg-surface p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="font-semibold">
+            <h2 className="font-semibold text-foreground">
               Needs Attention
             </h2>
-
             <p className="mt-1 text-sm text-muted-foreground">
-              Applications that still need review before a final
-              decision can be made.
+              Applications that still need review before a final decision can be made.
             </p>
           </div>
-
           <AlertTriangle
             size={20}
             className="text-warning"
             strokeWidth={1.8}
           />
         </div>
-
         <div className="mt-6">
           {needsAttention.length > 0 ? (
             <div className="space-y-3">
               {needsAttention.slice(0, 5).map((application) => {
                 const review = reviewMap.get(application.id);
-
                 return (
                   <div
                     key={application.id}
-                    className="flex items-center justify-between gap-4 rounded-lg bg-secondary p-3"
+                    className="flex items-center justify-between gap-4 rounded-lg bg-muted p-3"
                   >
                     <div>
-                      <p className="text-sm font-medium">
+                      <p className="text-sm font-medium text-foreground">
                         {application.id}
                       </p>
-
                       <p className="text-xs text-muted-foreground">
                         {application.program}
                       </p>
                     </div>
-
                     {review ? (
                       <Link
                         to={`/reviews/${review.id}`}
@@ -509,15 +492,13 @@ function DashboardPage() {
       <section className="overflow-hidden rounded-xl border border-border bg-surface">
         <div className="flex flex-col gap-3 border-b border-border p-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="font-semibold">
+            <h2 className="font-semibold text-foreground">
               Recent Applications
             </h2>
-
             <p className="mt-1 text-sm text-muted-foreground">
               Most recently submitted applications.
             </p>
           </div>
-
           <Link
             to="/applicants"
             className="text-sm font-medium text-primary hover:underline"
@@ -525,38 +506,31 @@ function DashboardPage() {
             View all applicants →
           </Link>
         </div>
-
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="border-b border-border bg-surface-muted">
+            <thead className="border-b border-border bg-muted">
               <tr>
                 <th className="px-5 py-3 font-medium text-muted-foreground">
                   Application
                 </th>
-
                 <th className="px-5 py-3 font-medium text-muted-foreground">
                   Program
                 </th>
-
                 <th className="px-5 py-3 font-medium text-muted-foreground">
                   Score
                 </th>
-
                 <th className="px-5 py-3 font-medium text-muted-foreground">
                   Review
                 </th>
-
                 <th className="px-5 py-3 font-medium text-muted-foreground">
                   Decision
                 </th>
               </tr>
             </thead>
-
             <tbody>
               {recentApplications.map((application) => {
                 const review = reviewMap.get(application.id);
                 const decision = decisionMap.get(application.id);
-
                 const score =
                   review?.status === "COMPLETE" &&
                   review.totalScore !== null
@@ -575,20 +549,16 @@ function DashboardPage() {
                       >
                         {application.id}
                       </Link>
-
                       <p className="mt-1 text-xs text-muted-foreground">
                         {application.applicantId}
                       </p>
                     </td>
-
                     <td className="px-5 py-4 text-muted-foreground">
                       {application.program}
                     </td>
-
-                    <td className="px-5 py-4 font-medium">
+                    <td className="px-5 py-4 font-medium text-foreground">
                       {score}
                     </td>
-
                     <td className="px-5 py-4">
                       {review?.status === "COMPLETE" ? (
                         <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300">
@@ -599,12 +569,11 @@ function DashboardPage() {
                           In progress
                         </span>
                       ) : (
-                        <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+                        <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
                           Not started
                         </span>
                       )}
                     </td>
-
                     <td className="px-5 py-4">
                       {decision?.decision === "SHORTLISTED" ? (
                         <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300">
@@ -619,7 +588,7 @@ function DashboardPage() {
                           Ready
                         </span>
                       ) : (
-                        <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
+                        <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
                           Pending
                         </span>
                       )}
@@ -652,13 +621,11 @@ function DashboardMetric({
         <p className="text-sm text-muted-foreground">
           {label}
         </p>
-
         <div className="rounded-lg bg-primary/10 p-2 text-primary">
           <Icon size={18} strokeWidth={1.8} />
         </div>
       </div>
-
-      <p className="mt-4 text-3xl font-semibold tracking-tight">
+      <p className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
         {value}
       </p>
     </div>
@@ -666,4 +633,3 @@ function DashboardMetric({
 }
 
 export default DashboardPage;
-
