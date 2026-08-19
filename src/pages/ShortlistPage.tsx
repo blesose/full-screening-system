@@ -665,39 +665,38 @@ function ShortlistPage() {
                   <span className="hidden xs:inline">Batch</span> Reject
                 </button>
 
-                
                 <PDFExportButton
-  data={filteredApplications.map(app => ({
-    'Application ID': app.id || 'N/A',
-    'Applicant ID': app.applicantId || 'N/A',
-    'Program': app.program || 'N/A',
-    'Program Code': app.programCode || 'N/A',
-    'Intake': app.intake || 'N/A',
-    'GPA': app.gpa?.toString() || 'N/A',
-    'Test Score': app.testScore?.toString() || 'N/A',
-    'Review Score': reviewMap.get(app.id)?.totalScore?.toString() ?? 'N/A',
-    'Status': app.status || 'N/A',
-    'Recommendation': getRecommendation(app.id) || 'N/A',
-    'Decision': decisionMap.get(app.id)?.decision ?? 'Pending',
-  }))}
-  columns={[
-    { header: 'Application ID', accessor: 'Application ID', width: 12 },
-    { header: 'Applicant ID', accessor: 'Applicant ID', width: 12 },
-    { header: 'Program', accessor: 'Program', width: 15 },
-    { header: 'Program Code', accessor: 'Program Code', width: 10 },
-    { header: 'Intake', accessor: 'Intake', width: 10 },
-    { header: 'GPA', accessor: 'GPA', width: 8 },
-    { header: 'Test Score', accessor: 'Test Score', width: 10 },
-    { header: 'Review Score', accessor: 'Review Score', width: 10 },
-    { header: 'Status', accessor: 'Status', width: 12 },
-    { header: 'Recommendation', accessor: 'Recommendation', width: 12 },
-    { header: 'Decision', accessor: 'Decision', width: 10 },
-  ]}
-  filename={`shortlist_${new Date().toISOString().split('T')[0]}`}
-  label="Export PDF"
-  variant="purple"
-  className="text-xs"
-/>
+                  data={filteredApplications.map(app => ({
+                    'Application ID': app.id || 'N/A',
+                    'Applicant ID': app.applicantId || 'N/A',
+                    'Program': app.program || 'N/A',
+                    'Program Code': app.programCode || 'N/A',
+                    'Intake': app.intake || 'N/A',
+                    'GPA': app.gpa?.toString() || 'N/A',
+                    'Test Score': app.testScore?.toString() || 'N/A',
+                    'Review Score': reviewMap.get(app.id)?.totalScore?.toString() ?? 'N/A',
+                    'Status': app.status || 'N/A',
+                    'Recommendation': getRecommendation(app.id) || 'N/A',
+                    'Decision': decisionMap.get(app.id)?.decision ?? 'Pending',
+                  }))}
+                  columns={[
+                    { header: 'Application ID', accessor: 'Application ID', width: 12 },
+                    { header: 'Applicant ID', accessor: 'Applicant ID', width: 12 },
+                    { header: 'Program', accessor: 'Program', width: 15 },
+                    { header: 'Program Code', accessor: 'Program Code', width: 10 },
+                    { header: 'Intake', accessor: 'Intake', width: 10 },
+                    { header: 'GPA', accessor: 'GPA', width: 8 },
+                    { header: 'Test Score', accessor: 'Test Score', width: 10 },
+                    { header: 'Review Score', accessor: 'Review Score', width: 10 },
+                    { header: 'Status', accessor: 'Status', width: 12 },
+                    { header: 'Recommendation', accessor: 'Recommendation', width: 12 },
+                    { header: 'Decision', accessor: 'Decision', width: 10 },
+                  ]}
+                  filename={`shortlist_${new Date().toISOString().split('T')[0]}`}
+                  label="Export PDF"
+                  variant="purple"
+                  className="text-xs"
+                />
 
                 <button
                   type="button"

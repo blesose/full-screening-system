@@ -187,61 +187,32 @@ function DashboardPage() {
     )
     .slice(0, 5);
 
-  // Prepare data for PDF export
-  const getExportData = () => {
-    const recentData = recentApplications.map(app => {
-      const review = reviewMap.get(app.id);
-      const decision = decisionMap.get(app.id);
-      return {
-        'Application ID': app.id,
-        'Program': app.program,
-        'Score': review?.status === 'COMPLETE' && review.totalScore !== null 
-          ? `${review.totalScore}/100` 
-          : 'N/A',
-        'Review Status': review?.status === 'COMPLETE' ? 'Complete' : 
-                          review ? 'In Progress' : 'Not Started',
-        'Decision': decision?.decision === 'SHORTLISTED' ? 'Shortlisted' :
-                    decision?.decision === 'REJECTED' ? 'Rejected' : 'Pending',
-        'Submitted': new Date(app.submittedAt).toLocaleDateString(),
-      };
-    });
+  // ===== PDF EXPORT DATA =====
+  // NOTE: kept as two separate exports (metrics + recent applications)
+  // because they have different shapes / column sets. Mixing them into
+  // one table with mismatched accessors was producing blank "—" rows
+  // and broken column rendering in the PDF.
 
-    return [
-      {
-        'Metric': 'Total Applications',
-        'Value': totalApplications.toString(),
-      },
-      {
-        'Metric': 'New Applications',
-        'Value': newApplications.toString(),
-      },
-      {
-        'Metric': 'In Review',
-        'Value': inReviewApplications.toString(),
-      },
-      {
-        'Metric': 'Shortlisted',
-        'Value': shortlistedApplications.toString(),
-      },
-      {
-        'Metric': 'Rejected',
-        'Value': rejectedApplications.toString(),
-      },
-      {
-        'Metric': 'Completed Reviews',
-        'Value': completedReviews.toString(),
-      },
-      {
-        'Metric': 'Ready for Decision',
-        'Value': readyForDecision.length.toString(),
-      },
-      ...recentData,
-    ];
-  };
+  const metricsExportData = [
+    { Metric: "Total Applications", Value: totalApplications.toString() },
+    { Metric: "New Applications", Value: newApplications.toString() },
+    { Metric: "In Review", Value: inReviewApplications.toString() },
+    { Metric: "Shortlisted", Value: shortlistedApplications.toString() },
+    { Metric: "Rejected", Value: rejectedApplications.toString() },
+    { Metric: "Completed Reviews", Value: completedReviews.toString() },
+    {
+      Metric: "Ready for Decision",
+      Value: readyForDecision.length.toString(),
+    },
+    {
+      Metric: "Average Completed-Review Score",
+      Value: averageScore !== null ? `${averageScore}/100` : "—",
+    },
+  ];
 
-  const exportColumns = [
-    { header: 'Metric / Application', accessor: 'Metric' },
-    { header: 'Value / Status', accessor: 'Value' },
+  const metricsExportColumns = [
+    { header: "Metric", accessor: "Metric", width: 60 },
+    { header: "Value", accessor: "Value", width: 40 },
   ];
 
   return (
@@ -261,8 +232,8 @@ function DashboardPage() {
           </p>
         </div>
         <PDFExportButton
-          data={getExportData()}
-          columns={exportColumns}
+          data={metricsExportData}
+          columns={metricsExportColumns}
           filename={`dashboard_${new Date().toISOString().split('T')[0]}`}
           label="Export Report"
           variant="purple"

@@ -107,7 +107,7 @@ export const generatePDFFromData = async (
   const pageHeight = pdf.internal.pageSize.getHeight();
 
   const availableWidth = pageWidth - margins.left - margins.right;
-  
+
   // Calculate column widths - ensure they sum to 100%
   const totalWidth = columns.reduce((sum, col) => sum + (col.width || 0), 0);
   const columnWidths = columns.map((col) => {
@@ -141,26 +141,36 @@ export const generatePDFFromData = async (
     yPosition += 8;
   }
 
-  // Headers
-  pdf.setFillColor(243, 244, 246);
-  pdf.setDrawColor(200, 200, 200);
-  pdf.setFontSize(9);
-  pdf.setTextColor(31, 41, 55);
-  pdf.setFont('helvetica', 'bold');
+  // Helper: draw one header row at the current yPosition
+  const drawHeaderRow = () => {
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'bold');
 
-  let xPosition = margins.left;
-  columns.forEach((col, index) => {
-    pdf.rect(xPosition, yPosition, columnWidths[index], 8, 'FD');
-    pdf.text(col.header, xPosition + 2, yPosition + 5.5);
-    xPosition += columnWidths[index];
-  });
+    let xPos = margins.left;
+    columns.forEach((col, index) => {
+      // reset fill/draw color immediately before every rect — jsPDF
+      // shares mutable draw state, so this must be set per-cell, not
+      // once outside the loop, or later cells can inherit stale state
+      pdf.setFillColor(243, 244, 246);
+      pdf.setDrawColor(200, 200, 200);
+      pdf.rect(xPos, yPosition, columnWidths[index], 8, 'FD');
 
-  yPosition += 8;
+      pdf.setTextColor(31, 41, 55);
+      pdf.text(col.header, xPos + 2, yPosition + 5.5, {
+        maxWidth: Math.max(columnWidths[index] - 4, 1),
+      });
+
+      xPos += columnWidths[index];
+    });
+
+    yPosition += 8;
+  };
+
+  drawHeaderRow();
 
   // Rows
   pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(8);
-  pdf.setTextColor(51, 65, 85);
 
   let rowCount = 0;
   const rowHeight = 7;
@@ -172,36 +182,35 @@ export const generatePDFFromData = async (
       yPosition = margins.top;
       rowCount = 0;
 
-      // Re-add headers on new page
-      pdf.setFont('helvetica', 'bold');
-      xPosition = margins.left;
-      columns.forEach((col, index) => {
-        pdf.rect(xPosition, yPosition, columnWidths[index], 8, 'FD');
-        pdf.text(col.header, xPosition + 2, yPosition + 5.5);
-        xPosition += columnWidths[index];
-      });
-      yPosition += 8;
+      drawHeaderRow();
+
       pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
     }
 
-    xPosition = margins.left;
+    let xPosition = margins.left;
 
-    if (rowCount % 2 === 0) {
-      pdf.setFillColor(255, 255, 255);
-    } else {
-      pdf.setFillColor(249, 250, 251);
-    }
+    const isEvenRow = rowCount % 2 === 0;
 
     columns.forEach((col, index) => {
       const value = row[col.accessor];
       const text = value !== undefined && value !== null && value !== '' ? String(value) : '—';
 
+      // reset fill color immediately before every rect, per cell
+      if (isEvenRow) {
+        pdf.setFillColor(255, 255, 255);
+      } else {
+        pdf.setFillColor(249, 250, 251);
+      }
       pdf.rect(xPosition, yPosition, columnWidths[index], rowHeight, 'F');
+
+      // reset text color immediately before every text call
+      pdf.setTextColor(51, 65, 85);
 
       // Truncate long text
       const maxWidth = columnWidths[index] - 4;
       let displayText = text;
-      const textWidth = pdf.getStringUnitWidth(text) * pdf.getFontSize() / 2.5;
+      const textWidth = (pdf.getStringUnitWidth(text) * pdf.getFontSize()) / 2.5;
       if (textWidth > maxWidth) {
         displayText = text.substring(0, Math.floor((maxWidth / textWidth) * text.length * 0.8)) + '...';
       }
