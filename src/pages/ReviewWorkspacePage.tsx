@@ -377,7 +377,7 @@ function ReviewWorkspaceContent({
   useKeyboardShortcuts(shortcuts);
 
   return (
-    <main className="space-y-4 sm:space-y-6 p-3 sm:p-6 max-w-full">
+    <main className="space-y-4 sm:space-y-6 p-4 sm:p-6 w-full max-w-full overflow-x-hidden">
       {/* Conflict Detection Modal */}
       {showPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -421,13 +421,13 @@ function ReviewWorkspaceContent({
         className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition hover:text-foreground"
         onClick={handleNavigateBack}
       >
-        <ArrowLeft className="h-4 w-4" />
-        Back to reviews
+        <ArrowLeft className="h-4 w-4 shrink-0" />
+        <span>Back to reviews</span>
       </button>
 
       {/* Unsaved changes indicator */}
       {hasUnsavedChanges() && !isReviewComplete && (
-        <div className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 sm:px-4 py-2 text-xs sm:text-sm text-amber-700 dark:bg-amber-950/30 dark:text-amber-400">
+        <div className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 sm:px-4 py-2 text-xs sm:text-sm text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 overflow-hidden">
           <CircleAlert className="h-4 w-4 shrink-0" />
           <span className="truncate">
             You have unsaved changes. Use Ctrl+S to save your draft.
@@ -436,39 +436,45 @@ function ReviewWorkspaceContent({
       )}
 
       {/* Page header */}
-      <header>
+      <header className="space-y-1 sm:space-y-2 w-full">
         <p className="text-xs sm:text-sm font-medium text-primary">
           Review Workspace
         </p>
-        <h1 className="mt-1 text-xl sm:text-2xl font-semibold text-foreground">
+        <h1 className="text-xl sm:text-2xl font-semibold text-foreground break-words">
           Application Review
         </h1>
-        <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+        <p className="text-xs sm:text-sm text-muted-foreground break-words">
           {application.program} · {application.intake}
         </p>
-        <div className="mt-2 flex flex-wrap gap-3 text-[10px] sm:text-xs text-muted-foreground">
-          <span>Ctrl+S: Save</span>
-          <span>Ctrl+Enter: Complete</span>
-          <span>Esc: Back</span>
+        <div className="flex flex-wrap gap-2 sm:gap-3 text-[10px] sm:text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1">
+            <span className="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded">Ctrl+S</span> Save
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded">Ctrl+Enter</span> Complete
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="font-mono text-[10px] bg-muted px-1.5 py-0.5 rounded">Esc</span> Back
+          </span>
         </div>
       </header>
 
       {/* Review metadata - Responsive */}
-      <section className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm">
+      <section className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm w-full overflow-hidden">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-          <div>
+          <div className="min-w-0">
             <p className="text-xs text-muted-foreground">Review ID</p>
-            <p className="mt-1 font-medium text-sm sm:text-base text-foreground">
+            <p className="mt-1 font-medium text-sm sm:text-base text-foreground break-all">
               {review.id}
             </p>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs text-muted-foreground">Rubric</p>
-            <p className="mt-1 font-medium text-sm sm:text-base text-foreground">
+            <p className="mt-1 font-medium text-sm sm:text-base text-foreground break-words">
               {rubric.name}
             </p>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs text-muted-foreground">Review Status</p>
             <span
               className={`mt-1 inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
@@ -484,11 +490,11 @@ function ReviewWorkspaceContent({
       </section>
 
       {/* Main content - Responsive grid */}
-      <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.5fr_1fr]">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.5fr_1fr] w-full overflow-hidden">
         {/* LEFT COLUMN */}
-        <section className="space-y-4 sm:space-y-6">
+        <section className="space-y-4 sm:space-y-6 min-w-0">
           {/* Applicant information - Responsive */}
-          <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm">
+          <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm w-full overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
               <div>
                 <h2 className="text-base sm:text-lg font-semibold text-foreground">
@@ -503,10 +509,10 @@ function ReviewWorkspaceContent({
               </span>
             </div>
 
-            <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
               <div>
                 <p className="text-xs text-muted-foreground">Applicant ID</p>
-                <p className="mt-1 font-medium text-sm text-foreground">
+                <p className="mt-1 font-medium text-sm text-foreground break-all">
                   {application.applicantId}
                 </p>
               </div>
@@ -524,7 +530,7 @@ function ReviewWorkspaceContent({
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Program</p>
-                <p className="mt-1 font-medium text-sm text-foreground">
+                <p className="mt-1 font-medium text-sm text-foreground break-words">
                   {application.program}
                 </p>
               </div>
@@ -544,36 +550,38 @@ function ReviewWorkspaceContent({
           </div>
 
           {/* AI Screening Assistant */}
-          <AIScreeningAssistant
-            application={{
-              firstName: applicant.firstName,
-              lastName: applicant.lastName,
-              program: application.program,
-              gpa: application.gpa,
-              gpaScale: application.gpaScale,
-              testScore: application.testScore,
-              essay: application.essay,
-              activities: application.activities,
-              achievements: application.achievements,
-              recommendationStatus: application.recommendationStatus,
-            }}
-            review={review}
-            rubric={rubric}
-          />
+          <div className="w-full overflow-hidden">
+            <AIScreeningAssistant
+              application={{
+                firstName: applicant.firstName,
+                lastName: applicant.lastName,
+                program: application.program,
+                gpa: application.gpa,
+                gpaScale: application.gpaScale,
+                testScore: application.testScore,
+                essay: application.essay,
+                activities: application.activities,
+                achievements: application.achievements,
+                recommendationStatus: application.recommendationStatus,
+              }}
+              review={review}
+              rubric={rubric}
+            />
+          </div>
 
           {/* Personal statement */}
-          <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm">
+          <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm w-full overflow-hidden">
             <h2 className="text-base sm:text-lg font-semibold text-foreground">
               Personal Statement
             </h2>
-            <p className="mt-3 sm:mt-4 whitespace-pre-line text-sm leading-6 text-muted-foreground">
+            <p className="mt-3 sm:mt-4 whitespace-pre-line text-sm leading-6 text-muted-foreground break-words">
               {application.essay}
             </p>
           </div>
 
           {/* Activities */}
           {application.activities.length > 0 && (
-            <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm">
+            <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm w-full overflow-hidden">
               <h2 className="text-base sm:text-lg font-semibold text-foreground">
                 Activities
               </h2>
@@ -581,7 +589,7 @@ function ReviewWorkspaceContent({
                 {application.activities.map((activity) => (
                   <li
                     key={activity}
-                    className="rounded-lg bg-muted px-3 sm:px-4 py-2 sm:py-3 text-sm text-foreground"
+                    className="rounded-lg bg-muted px-3 sm:px-4 py-2 sm:py-3 text-sm text-foreground break-words"
                   >
                     {activity}
                   </li>
@@ -592,7 +600,7 @@ function ReviewWorkspaceContent({
 
           {/* Achievements */}
           {application.achievements.length > 0 && (
-            <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm">
+            <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm w-full overflow-hidden">
               <h2 className="text-base sm:text-lg font-semibold text-foreground">
                 Achievements
               </h2>
@@ -600,7 +608,7 @@ function ReviewWorkspaceContent({
                 {application.achievements.map((achievement) => (
                   <li
                     key={achievement}
-                    className="rounded-lg bg-muted px-3 sm:px-4 py-2 sm:py-3 text-sm text-foreground"
+                    className="rounded-lg bg-muted px-3 sm:px-4 py-2 sm:py-3 text-sm text-foreground break-words"
                   >
                     {achievement}
                   </li>
@@ -610,7 +618,7 @@ function ReviewWorkspaceContent({
           )}
 
           {/* Rubric - Responsive */}
-          <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm">
+          <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm w-full overflow-hidden">
             <div>
               <h2 className="text-base sm:text-lg font-semibold text-foreground">
                 {rubric.name}
@@ -627,14 +635,14 @@ function ReviewWorkspaceContent({
                 return (
                   <div
                     key={criterion.id}
-                    className="rounded-xl border border-border p-4 sm:p-5"
+                    className="rounded-xl border border-border p-4 sm:p-5 w-full overflow-hidden"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                      <div>
-                        <h3 className="font-medium text-sm sm:text-base text-foreground">
+                      <div className="min-w-0">
+                        <h3 className="font-medium text-sm sm:text-base text-foreground break-words">
                           {criterion.name}
                         </h3>
-                        <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+                        <p className="mt-1 text-xs sm:text-sm text-muted-foreground break-words">
                           {criterion.description}
                         </p>
                       </div>
@@ -643,7 +651,7 @@ function ReviewWorkspaceContent({
                       </span>
                     </div>
 
-                    <div className="mt-3 sm:mt-4 flex items-center gap-3">
+                    <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-3">
                       <input
                         type="number"
                         min={0}
@@ -672,9 +680,9 @@ function ReviewWorkspaceContent({
         </section>
 
         {/* RIGHT COLUMN */}
-        <aside className="space-y-4 sm:space-y-6">
+        <aside className="space-y-4 sm:space-y-6 min-w-0">
           {/* Review summary - Responsive */}
-          <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm">
+          <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm w-full overflow-hidden">
             <h2 className="text-base sm:text-lg font-semibold text-foreground">
               Review Summary
             </h2>
@@ -728,7 +736,7 @@ function ReviewWorkspaceContent({
           </div>
 
           {/* Reviewer comments - Responsive */}
-          <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm">
+          <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm w-full overflow-hidden">
             <h2 className="text-base sm:text-lg font-semibold text-foreground">
               Reviewer Comments
             </h2>
@@ -736,17 +744,19 @@ function ReviewWorkspaceContent({
               value={reviewerComment}
               disabled={isReviewComplete}
               onChange={(event) => setReviewerComment(event.target.value)}
-              rows={5}
+              rows={4}
               placeholder="Add your review comments..."
               className="mt-3 sm:mt-4 w-full resize-none rounded-xl border border-border bg-background px-3 py-2 sm:py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60"
             />
           </div>
 
           {/* Activity & Comments */}
-          <ActivityPanel
-            applicationId={application.id}
-            reviewerId={review.reviewerId}
-          />
+          <div className="w-full overflow-hidden">
+            <ActivityPanel
+              applicationId={application.id}
+              reviewerId={review.reviewerId}
+            />
+          </div>
 
           {/* Review actions - Responsive */}
           {!isReviewComplete && (
@@ -793,7 +803,7 @@ function ReviewWorkspaceContent({
 
           {/* Decision - Responsive */}
           {isReviewComplete && (
-            <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm">
+            <div className="rounded-2xl border border-border bg-surface p-4 sm:p-6 shadow-sm w-full overflow-hidden">
               <div>
                 <h2 className="text-base sm:text-lg font-semibold text-foreground">
                   Decision
@@ -830,26 +840,28 @@ function ReviewWorkspaceContent({
                 <button
                   type="button"
                   onClick={() => setDecision("SHORTLISTED")}
-                  className={`flex items-center justify-center gap-2 rounded-xl border px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition ${
+                  className={`flex items-center justify-center gap-2 rounded-xl border px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium transition ${
                     decision === "SHORTLISTED"
                       ? "border-emerald-500 bg-emerald-50 text-emerald-700 dark:border-emerald-400 dark:bg-emerald-950/30 dark:text-emerald-400"
                       : "border-border bg-surface text-muted-foreground hover:bg-muted"
                   }`}
                 >
-                  <CheckCircle2 className="h-4 w-4" />
-                  Shortlist
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <span className="hidden xs:inline">Shortlist</span>
+                  <span className="xs:hidden">Shortlist</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setDecision("REJECTED")}
-                  className={`flex items-center justify-center gap-2 rounded-xl border px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition ${
+                  className={`flex items-center justify-center gap-2 rounded-xl border px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium transition ${
                     decision === "REJECTED"
                       ? "border-red-500 bg-red-50 text-red-700 dark:border-red-400 dark:bg-red-950/30 dark:text-red-400"
                       : "border-border bg-surface text-muted-foreground hover:bg-muted"
                   }`}
                 >
-                  <XCircle className="h-4 w-4" />
-                  Reject
+                  <XCircle className="h-4 w-4 shrink-0" />
+                  <span className="hidden xs:inline">Reject</span>
+                  <span className="xs:hidden">Reject</span>
                 </button>
               </div>
 
@@ -865,7 +877,7 @@ function ReviewWorkspaceContent({
                   id="decision-reason"
                   value={decisionReason}
                   onChange={(event) => setDecisionReason(event.target.value)}
-                  rows={4}
+                  rows={3}
                   placeholder="Explain the reason for this decision..."
                   className="mt-2 w-full resize-none rounded-xl border border-border bg-background px-3 py-2 sm:py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />

@@ -136,7 +136,7 @@ function SavedViewsPage() {
 
   if (isLoading) {
     return (
-      <main className="flex min-h-[60vh] items-center justify-center">
+      <main className="flex min-h-[60vh] items-center justify-center p-4">
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <LoaderCircle className="h-5 w-5 animate-spin" />
           Loading saved views...
@@ -147,13 +147,13 @@ function SavedViewsPage() {
 
   if (isError) {
     return (
-      <main className="space-y-6">
+      <main className="space-y-4 sm:space-y-6 p-4 sm:p-6">
         <section>
           <p className="text-sm text-muted-foreground">
             Admissions Workspace
           </p>
 
-          <h1 className="mt-1 text-3xl font-semibold text-foreground">
+          <h1 className="mt-1 text-2xl sm:text-3xl font-semibold text-foreground">
             Saved Views
           </h1>
 
@@ -162,7 +162,7 @@ function SavedViewsPage() {
           </p>
         </section>
 
-        <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 sm:p-5 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
           Unable to load saved views.
         </div>
       </main>
@@ -170,28 +170,28 @@ function SavedViewsPage() {
   }
 
   return (
-    <main className="space-y-6">
+    <main className="space-y-4 sm:space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <section>
-        <p className="text-sm text-muted-foreground">
+      <section className="space-y-1 sm:space-y-2">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Admissions Workspace
         </p>
 
-        <h1 className="mt-1 text-3xl font-semibold text-foreground">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
           Saved Views
         </h1>
 
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Save and reuse frequently used applicant filters and
           sorting preferences.
         </p>
       </section>
 
-      {/* Summary */}
-      <section className="rounded-xl border border-border bg-surface p-5">
+      {/* Summary - Responsive */}
+      <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-primary/10 p-2.5 text-primary">
-            <Bookmark size={20} />
+          <div className="rounded-lg bg-primary/10 p-2 sm:p-2.5 text-primary">
+            <Bookmark size={18} className="sm:w-[20px] sm:h-[20px]" />
           </div>
 
           <div>
@@ -199,19 +199,19 @@ function SavedViewsPage() {
               Saved views
             </p>
 
-            <p className="text-2xl font-semibold text-foreground">
+            <p className="text-xl sm:text-2xl font-semibold text-foreground">
               {savedViews.length}
             </p>
           </div>
         </div>
       </section>
 
-      {/* Saved Views */}
+      {/* Saved Views - Responsive grid */}
       {sortedViews.length === 0 ? (
-        <section className="rounded-xl border border-border bg-surface px-6 py-16 text-center">
+        <section className="rounded-xl border border-border bg-surface px-4 py-12 sm:px-6 sm:py-16 text-center">
           <Bookmark
-            size={36}
-            className="mx-auto text-muted-foreground"
+            size={32}
+            className="mx-auto text-muted-foreground sm:w-[36px] sm:h-[36px]"
           />
 
           <h2 className="mt-4 text-base font-semibold text-foreground">
@@ -224,7 +224,7 @@ function SavedViewsPage() {
           </p>
         </section>
       ) : (
-        <section className="grid gap-4 xl:grid-cols-2">
+        <section className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4">
           {sortedViews.map((view) => (
             <SavedViewCard
               key={view.id}
@@ -257,23 +257,22 @@ function SavedViewCard({
   const { filters, sort } = view;
 
   return (
-    <article className="rounded-xl border border-border bg-surface p-5">
+    <article className="rounded-xl border border-border bg-surface p-4 sm:p-5 w-full overflow-hidden">
       {/* Card header */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <div className="rounded-lg bg-primary/10 p-2.5 text-primary">
-            <Bookmark size={18} />
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3 min-w-0">
+          <div className="rounded-lg bg-primary/10 p-2 sm:p-2.5 text-primary shrink-0">
+            <Bookmark size={16} className="sm:w-[18px] sm:h-[18px]" />
           </div>
 
-          <div>
-            <h2 className="font-semibold text-foreground">
+          <div className="min-w-0">
+            <h2 className="font-semibold text-foreground break-words text-sm sm:text-base">
               {view.name}
             </h2>
 
             <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-              <CalendarDays size={13} />
-
-              <span>
+              <CalendarDays size={12} className="shrink-0" />
+              <span className="truncate">
                 Created {formatDate(view.createdAt)}
               </span>
             </div>
@@ -285,25 +284,25 @@ function SavedViewCard({
           onClick={onDelete}
           disabled={deleting}
           title="Delete saved view"
-          className="rounded-lg p-2 text-muted-foreground transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-red-950/30 dark:hover:text-red-400"
+          className="rounded-lg p-1.5 sm:p-2 text-muted-foreground transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-red-950/30 dark:hover:text-red-400 shrink-0"
         >
           {deleting ? (
             <LoaderCircle
-              size={17}
+              size={15}
               className="animate-spin"
             />
           ) : (
-            <Trash2 size={17} />
+            <Trash2 size={15} />
           )}
         </button>
       </div>
 
       {/* Filters */}
-      <div className="mt-5">
+      <div className="mt-4 sm:mt-5">
         <div className="flex items-center gap-2">
           <Filter
-            size={15}
-            className="text-muted-foreground"
+            size={14}
+            className="text-muted-foreground shrink-0"
           />
 
           <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -311,7 +310,7 @@ function SavedViewCard({
           </h3>
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-2 sm:mt-3 flex flex-wrap gap-1.5 sm:gap-2">
           <FilterBadge
             label="Status"
             value={statusLabels[filters.status]}
@@ -349,7 +348,7 @@ function SavedViewCard({
             filters.minScore === null &&
             filters.maxScore === null &&
             !filters.search && (
-              <span className="text-sm text-muted-foreground">
+              <span className="text-xs sm:text-sm text-muted-foreground">
                 No additional filters
               </span>
             )}
@@ -357,19 +356,19 @@ function SavedViewCard({
       </div>
 
       {/* Sort */}
-      <div className="mt-5 border-t border-border pt-4">
+      <div className="mt-4 sm:mt-5 border-t border-border pt-3 sm:pt-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Sort
         </p>
 
-        <div className="mt-2 flex items-center gap-2 text-sm text-foreground">
+        <div className="mt-1.5 sm:mt-2 flex items-center gap-2 text-xs sm:text-sm text-foreground">
           {sort.direction === "asc" ? (
-            <ArrowUp size={15} />
+            <ArrowUp size={14} className="shrink-0" />
           ) : (
-            <ArrowDown size={15} />
+            <ArrowDown size={14} className="shrink-0" />
           )}
 
-          <span>
+          <span className="break-words">
             {sortFieldLabels[sort.field]}
           </span>
 
@@ -386,11 +385,11 @@ function SavedViewCard({
       </div>
 
       {/* Actions */}
-      <div className="mt-5 flex items-center justify-end border-t border-border pt-4">
+      <div className="mt-4 sm:mt-5 flex items-center justify-end border-t border-border pt-3 sm:pt-4">
         <button
           type="button"
           onClick={onApply}
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+          className="rounded-lg bg-primary px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
         >
           Apply View
         </button>
@@ -407,12 +406,12 @@ function FilterBadge({
   value: string;
 }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-xs text-foreground">
+    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs text-foreground">
       <span className="font-medium text-muted-foreground">
         {label}:
       </span>
 
-      <span>{value}</span>
+      <span className="break-words">{value}</span>
     </span>
   );
 }

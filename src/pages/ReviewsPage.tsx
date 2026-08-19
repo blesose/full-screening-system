@@ -6,6 +6,8 @@ import {
   Search,
   CheckCircle2,
   FileSearch,
+  ArrowRight,
+  PlayCircle,
 } from "lucide-react";
 
 import { useReviews } from "../features/reviews/hooks/useReviews";
@@ -111,12 +113,12 @@ function ReviewsPage() {
 
   if (isLoading) {
     return (
-      <main className="space-y-6">
+      <main className="space-y-4 sm:space-y-6 p-4 sm:p-6">
         <section>
           <p className="text-sm text-muted-foreground">
             Admissions Workspace
           </p>
-          <h1 className="mt-1 text-3xl font-semibold text-foreground">
+          <h1 className="mt-1 text-2xl sm:text-3xl font-semibold text-foreground">
             Reviews
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -129,17 +131,17 @@ function ReviewsPage() {
 
   if (isError) {
     return (
-      <main className="space-y-6">
+      <main className="space-y-4 sm:space-y-6 p-4 sm:p-6">
         <section>
           <p className="text-sm text-muted-foreground">
             Admissions Workspace
           </p>
-          <h1 className="mt-1 text-3xl font-semibold text-foreground">
+          <h1 className="mt-1 text-2xl sm:text-3xl font-semibold text-foreground">
             Reviews
           </h1>
         </section>
 
-        <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 sm:p-5 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
           Unable to load reviews or applications.
           Please check that the API server is running.
         </div>
@@ -148,78 +150,67 @@ function ReviewsPage() {
   }
 
   return (
-    <main className="space-y-6">
+    <main className="space-y-4 sm:space-y-6 p-4 sm:p-6">
       {/* Page header */}
-      <section>
-        <p className="text-sm text-muted-foreground">
+      <section className="space-y-1 sm:space-y-2">
+        <p className="text-xs sm:text-sm font-medium text-muted-foreground">
           Admissions Workspace
         </p>
 
-        <div className="mt-1 flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-semibold text-foreground">
-              Reviews
-            </h1>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
+          Reviews
+        </h1>
 
-            <p className="mt-2 text-sm text-muted-foreground">
-              Review applicant submissions, score applications,
-              and track reviewer progress.
-            </p>
-          </div>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Review applicant submissions, score applications,
+          and track reviewer progress.
+        </p>
       </section>
 
-      {/* Review statistics */}
-      <section className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border border-border bg-surface p-5">
+      {/* Review statistics - Responsive grid */}
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
               Total Reviews
             </p>
-
             <div className="rounded-lg bg-primary/10 p-2 text-primary">
               <ClipboardCheck size={18} />
             </div>
           </div>
-
-          <p className="mt-4 text-3xl font-semibold text-foreground">
+          <p className="mt-2 sm:mt-4 text-2xl sm:text-3xl font-semibold text-foreground">
             {reviews.length}
           </p>
         </div>
 
-        <div className="rounded-xl border border-border bg-surface p-5">
+        <div className="rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
               In Progress
             </p>
-
             <div className="rounded-lg bg-amber-50 p-2 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400">
               <Clock3 size={18} />
             </div>
           </div>
-
-          <p className="mt-4 text-3xl font-semibold text-foreground">
+          <p className="mt-2 sm:mt-4 text-2xl sm:text-3xl font-semibold text-foreground">
             {inProgressCount}
           </p>
         </div>
 
-        <div className="rounded-xl border border-border bg-surface p-5">
+        <div className="rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
               Average Completed Score
             </p>
-
             <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400">
               <CheckCircle2 size={18} />
             </div>
           </div>
-
-          <p className="mt-4 text-3xl font-semibold text-foreground">
+          <p className="mt-2 sm:mt-4 text-2xl sm:text-3xl font-semibold text-foreground">
             {averageScore !== null
               ? `${averageScore.toFixed(1)}/100`
               : "—"}
           </p>
-
           <p className="mt-1 text-xs text-muted-foreground">
             {completedCount} completed review
             {completedCount === 1 ? "" : "s"}
@@ -229,84 +220,72 @@ function ReviewsPage() {
 
       {/* Reviews table */}
       <section className="overflow-hidden rounded-xl border border-border bg-surface">
-        <div className="border-b border-border p-4">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="border-b border-border p-3 sm:p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
               <Search
-                size={18}
+                size={16}
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               />
-
               <input
                 type="search"
                 value={search}
-                onChange={(event) =>
-                  setSearch(event.target.value)
-                }
+                onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search reviews, applications, programs..."
-                className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
             <select
               value={statusFilter}
               onChange={(event) =>
-                setStatusFilter(
-                  event.target.value as ReviewFilter,
-                )
+                setStatusFilter(event.target.value as ReviewFilter)
               }
-              className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="w-full sm:w-auto rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             >
-              {Object.entries(reviewStatusLabels).map(
-                ([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ),
-              )}
+              {Object.entries(reviewStatusLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </select>
           </div>
         </div>
 
         {filteredReviews.length === 0 ? (
-          <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-            <FileSearch
-              size={36}
-              className="text-muted-foreground"
-            />
-
+          <div className="flex flex-col items-center justify-center px-4 py-12 sm:px-6 sm:py-16 text-center">
+            <FileSearch size={32} className="text-muted-foreground" />
             <h2 className="mt-4 text-base font-semibold text-foreground">
               No reviews found
             </h2>
-
             <p className="mt-1 max-w-md text-sm text-muted-foreground">
               Try adjusting your search or status filter.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px]">
+            <table className="w-full min-w-[700px]">
               <thead>
                 <tr className="border-b border-border bg-muted text-left">
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <th className="px-3 sm:px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Application
                   </th>
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <th className="px-3 sm:px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Program
                   </th>
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <th className="px-3 sm:px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Reviewer
                   </th>
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <th className="px-3 sm:px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Score
                   </th>
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <th className="px-3 sm:px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Status
                   </th>
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <th className="px-3 sm:px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Updated
                   </th>
-                  <th className="px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <th className="px-3 sm:px-5 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Action
                   </th>
                 </tr>
@@ -314,80 +293,92 @@ function ReviewsPage() {
 
               <tbody>
                 {filteredReviews.map((review) => {
-                  const application = applicationMap.get(
-                    review.applicationId,
-                  );
+                  const application = applicationMap.get(review.applicationId);
+                  const isComplete = review.status === "COMPLETE";
 
                   return (
                     <tr
                       key={review.id}
-                      className="border-b border-border last:border-0 hover:bg-muted/50"
+                      className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors"
                     >
-                      {/* Application */}
-                      <td className="px-5 py-4">
+                      <td className="px-3 sm:px-5 py-3 sm:py-4">
                         <Link
                           to={`/applicants/${review.applicationId}`}
-                          className="font-medium text-primary hover:underline"
+                          className="font-medium text-primary hover:underline text-sm"
                         >
                           {review.applicationId}
                         </Link>
                       </td>
 
-                      {/* Program */}
-                      <td className="px-5 py-4">
+                      <td className="px-3 sm:px-5 py-3 sm:py-4">
                         <p className="text-sm font-medium text-foreground">
-                          {application?.program ?? "Unknown program"}
+                          {application?.program ?? "Unknown"}
                         </p>
-
                         {application?.programCode && (
-                          <p className="mt-1 text-xs text-muted-foreground">
+                          <p className="mt-0.5 text-xs text-muted-foreground">
                             {application.programCode}
                           </p>
                         )}
                       </td>
 
-                      {/* Reviewer */}
-                      <td className="px-5 py-4 text-sm text-foreground">
+                      <td className="px-3 sm:px-5 py-3 sm:py-4 text-sm text-foreground">
                         {review.reviewerId}
                       </td>
 
-                      {/* Score */}
-                      <td className="px-5 py-4">
-                        <span className="text-sm font-semibold text-foreground">
+                      <td className="px-3 sm:px-5 py-3 sm:py-4">
+                        <span className={`text-sm font-semibold ${
+                          review.totalScore !== null && review.totalScore >= 70
+                            ? 'text-emerald-600 dark:text-emerald-400'
+                            : review.totalScore !== null && review.totalScore >= 50
+                            ? 'text-amber-600 dark:text-amber-400'
+                            : review.totalScore !== null
+                            ? 'text-red-600 dark:text-red-400'
+                            : 'text-muted-foreground'
+                        }`}>
                           {review.totalScore !== null
                             ? `${review.totalScore}/100`
                             : "—"}
                         </span>
                       </td>
 
-                      {/* Status */}
-                      <td className="px-5 py-4">
-                        <Link
-                          to={`/reviews/${review.id}`}
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium transition hover:opacity-80 ${
-                            review.status === "COMPLETE"
-                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
-                              : "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
-                          }`}
-                        >
-                          {review.status === "COMPLETE"
-                            ? "Completed"
-                            : "In progress"}
-                        </Link>
+                      <td className="px-3 sm:px-5 py-3 sm:py-4">
+                        {isComplete ? (
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+                            <CheckCircle2 size={12} />
+                            Completed
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+                            <Clock3 size={12} className="animate-pulse" />
+                            In Progress
+                          </span>
+                        )}
                       </td>
 
-                      {/* Updated */}
-                      <td className="px-5 py-4 text-sm text-muted-foreground">
+                      <td className="px-3 sm:px-5 py-3 sm:py-4 text-sm text-muted-foreground">
                         {new Date(review.updatedAt).toLocaleDateString()}
                       </td>
 
-                      {/* Action */}
-                      <td className="px-5 py-4">
+                      <td className="px-3 sm:px-5 py-3 sm:py-4">
                         <Link
                           to={`/reviews/${review.id}`}
-                          className="inline-flex items-center rounded-lg bg-primary/10 px-3 py-2 text-xs font-medium text-primary transition hover:bg-primary/20"
+                          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 sm:py-2 text-xs font-medium transition ${
+                            isComplete
+                              ? 'bg-primary/10 text-primary hover:bg-primary/20'
+                              : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                          }`}
                         >
-                          Open Review
+                          {isComplete ? (
+                            <>
+                              <ArrowRight size={14} />
+                              View Review
+                            </>
+                          ) : (
+                            <>
+                              <PlayCircle size={14} />
+                              Continue
+                            </>
+                          )}
                         </Link>
                       </td>
                     </tr>
